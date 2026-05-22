@@ -1,0 +1,55 @@
+// Automatic Solar Tracker using Arduino
+
+#include <Servo.h>
+
+Servo solarServo;
+
+int leftSensor = A0;
+int rightSensor = A1;
+
+int leftValue = 0;
+int rightValue = 0;
+
+int servoPosition = 90;
+
+void setup() {
+  solarServo.attach(9);
+  solarServo.write(servoPosition);
+
+  pinMode(leftSensor, INPUT);
+  pinMode(rightSensor, INPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  leftValue = analogRead(leftSensor);
+  rightValue = analogRead(rightSensor);
+
+  Serial.print("Left Sensor: ");
+  Serial.println(leftValue);
+
+  Serial.print("Right Sensor: ");
+  Serial.println(rightValue);
+
+  if (leftValue > rightValue + 50) {
+    servoPosition++;
+    if (servoPosition > 180) {
+      servoPosition = 180;
+    }
+    solarServo.write(servoPosition);
+    delay(15);
+  }
+
+  else if (rightValue > leftValue + 50) {
+    servoPosition--;
+    if (servoPosition < 0) {
+      servoPosition = 0;
+    }
+    solarServo.write(servoPosition);
+    delay(15);
+  }
+
+  delay(100);
+}
